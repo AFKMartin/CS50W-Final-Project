@@ -1,10 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Final project index</title>
-</head>
-<body>If you can see this, the urls are wired properly</h1>
-  
-</body>
-</html>
+{% extends "explorer/layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <div class="text-center">
+    <h1 class="fw-bold mb-4">Welcome to Untitled Project</h1>
+    <p class="lead">Explore mathematical conjectures through interactive games.</p>
+
+    {% if user.is_authenticated %}
+      <div class="d-grid gap-3 col-6 mx-auto mt-4">
+        <a href="{% url 'collatz' %}" class="btn btn-primary btn-lg">Collatz Game</a>
+        <a href="{% url 'riemann' %}" class="btn btn-secondary btn-lg">Riemann Game</a>
+        <a href="{% url 'golbatch' %}" class="btn btn-success btn-lg">Goldbach Game</a>
+        <a href="{% url 'ranking' %}" class="btn btn-info btn-lg">View Rankings</a>
+      </div>
+    {% else %}
+      <div class="d-grid gap-3 col-6 mx-auto mt-4">
+        <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-outline-success btn-lg">Register</a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
