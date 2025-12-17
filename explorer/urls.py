@@ -15,7 +15,7 @@ urlpatterns = [
     path("profile/", views.profile, name="profile"),
 
     # Games
-    path("collatz/", views.collatz, name="collatz"),
+    path('collatz/', views.collatz_game, name='collatz'),
     path("riemann/", views.riemann, name="riemann"),
     path("golbatch/", views.golbatch, name="golbatch"),
 

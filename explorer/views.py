@@ -4,6 +4,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.urls import reverse
+from .utils import *
 
 def index(request):
     return render(request, "explorer/index.html")
@@ -66,4 +67,28 @@ def golbatch(request):
     return render(request, "explorer/golbatch.html")
 
 def ranking(request):
-    return render(request, "explorer/rankings.html")
+    return render(request, "explorer/ranking.html")
+
+def collatz_game(request):
+    res = None
+    error = None
+    if request.method == "POST":
+        try:
+            n_str = request.POST.get("number")
+            if not n_str:
+                error = "Please enter a number."
+            else:
+                n = int(n_str)
+                if n < 1 or n > 1000000:
+                    error = "Please enter a number between 1 and 1.000.000"
+                else:
+                    res = collatz_seq(n)
+        except ValueError:
+            error = "Please enter a valid integer."
+
+    return render(request, "explorer/collatz.html", {
+        "result": res,
+        "error": error
+    })
+
+
