@@ -7,12 +7,12 @@
 {% block content %}
 
 <div class="text-center">
-  <h1 class="mb-4">Collatz Conjeture Game</h1>
+  <h1 class="mb-4">Collatz Conjecture Game</h1>
   
   <!-- Input form -->
    <form method="post" action="{% url 'collatz' %}" class="mb-4">
       {% csrf_token %}
-        <input type="number" name="number" placeholder="Enter a number between 1 and 1.000.000" class="form-control mx-auto" style="max-width: 330px;">
+        <input type="number" name="number" placeholder="Enter a number between 1 and 1,000,000" class="form-control mx-auto" style="max-width: 330px;">
           <button type="submit" class="btn btn-primary mt-2">Test the number!</button>
    </form>
 
@@ -27,26 +27,60 @@
       <p>Total steps: <strong>{{ result.steps }}</strong></p>
       <p>Max value: <strong>{{ result.max_value }}</strong></p>
       {% if result.truncated %}
-        <p class="text-warning">Sequence truncated at maximum allowed steps (1.000)</p>
+        <p class="text-warning">Sequence truncated at maximum allowed steps (1,000)</p>
       {% endif %}
     </div>
   
-  <!-- Visualization container -->
-    <div style="overflow-x: auto;">
-      <canvas id="collatzCanvas" width="600" height="600" style="max-width: 100%;"></canvas>
-    </div>
+  <!-- Visualization tabs -->
+   <ul class="nav nav-tabs justify-content-center mb-3" id="vizTabs" role="tablist">
+    
+    <!-- Mountain view -->
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="mountain-tab" data-bs-toggle="tab" data-bs-target="#mountain" type="button">Mountain View</button>
+    </li>
+
+    <!-- Spiral view -->
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="spiral-tab" data-bs-toggle="tab" data-bs-target="#spiral" type="button">Spiral View</button>
+    </li>
+   </ul>
+
+   <div class="tab-content" id="vizTabContent">
+    <!-- Mountain Chart -->
+     <div class="tab-pane fade show active" id="mountain" role="tabpanel">
+      <div style="overflow-x: auto;">
+        <canvas id="mountainChart" width="1000" height="400" style="max-width:100%; border: 1px solid #dee2e6; border-radius: 4px; background: white;">
+        </canvas>
+      </div>
+     </div>
+
+    <!-- Spiral Chart -->
+     <div class="tab-pane fade" id="spiral" role="tabpanel">
+      <div style="overflow-x: auto;">
+        <canvas id="spiralChart" width="600" height="600" style="max-width: 100%; border: 1px solid #dee2e6; border-radius: 4px; background: white">
+        </canvas>
+      </div>
+     </div>
+
   
   <!-- Pass sequence safely -->
     {{ result.sequence|json_script:"collatz-data" }}
+  {% endif %}
+</div>
 
-   <script>
+<!-- Load collatz.js -->
+{% if result %}
+<script src="{% static 'explorer/collatz.js' %}"></script>
+{% endif %}
+{% endblock %}    
+
+   <!-- OLD VERSION <script>
     window.addEventListener("DOMContentLoaded", () => {
-      const canvas = document.getElementById("collatzCanvas");
-      const json_script = document.getElementById("collatz-data");
+      const canvas = document.getElementById("collatzTree");
+      const dataScript = document.getElementById("collatz-data");
+      if (!canvas || !dataScript) return;
 
-      if (!canvas || !json_script) return;
-
-      const sequence = JSON.parse(json_script.textContent);
+      const sequence = JSON.parse(dataScript.textContent);
       const ctx = canvas.getContext("2d");
 
       // screen adjust
@@ -57,48 +91,48 @@
       const width = canvas.width / dpr;
       const height = canvas.height / dpr;
 
+      ctx.clearRect(0,0,width,height);
+
       // center
-      let x = width / 2;
-      let y = height / 2;
-      let angle = 0; // this is rad
-      
-      const angleStep = Math.PI / 6; // turn for each step
+      let x = width/2;
+      let y = height/2;
+      let angle = -Math.PI/2; 
+      const angleStep = Math.PI / 12; 
       const scale = 6;
+      ctx.lineWidth = 1;
 
-      ctx.clearRect(0, 0, width, height);
-      ctx.lineWidth = 1.2;
-      ctx.strokeStyle = "#1f77b4";
-      ctx.beginPath();
-      ctx.moveTo(x, y);
+      sequence.forEach((value,i) => { 
+        const stepLength = Math.log(value+1)*scale;
 
-      sequence.forEach((value) => {
-        const stepLength = Math.log(value + 1) * scale;
+        if(value % 2 === 0) angle += angleStep;
+        else angle -= angleStep;
 
-        // Even -> Right, Odd -> Left
-        if (value % 2 === 0) {
-          angle += angleStep;
-        } else {
-          angle -= angleStep;
-        }
+        const newX = x + Math.cos(angle)*stepLength;
+        const newY = y + Math.sin(angle)*stepLength;
 
-        const newX = x + Math.cos(angle) * stepLength;
-        const newY = y + Math.sin(angle) * stepLength;
+        // color by value
+        const logVal = Math.log(value + 1);
+        const hue = Math.floor(240 - Math.min(logVal*15,240));
+        ctx.strokeStyle = `hsl(${hue},70%,50%)`;
+        ctx.beginPath();
+        ctx.moveTo(x,y);
+        ctx.lineTo(newX,newY);
+        ctx.stroke();
 
-        ctx.lineTo(newX, newY);
+        // Draw Node
+        ctx.fillStyle = `hsl(${hue},70%,50%)`;
+        ctx.beginPath();
+        ctx.arc(newX,newY,2,0,2*Math.PI);
+        ctx.fill();
 
         x = newX;
         y = newY;
       });
 
-      ctx.stroke();
-
-      // endpoint
-      ctx.fillStyle = "red";
+      // Endpoint
+      ctx.fillStyle="red";
       ctx.beginPath();
-      ctx.arc(x, y, 3, 0, 2 * Math.PI);
+      ctx.arc(x,y,4,0,2*Math.PI);
       ctx.fill();
     });
-   </script>
-  {% endif %}
-</div>
-{% endblock %}
+   </script>-->
