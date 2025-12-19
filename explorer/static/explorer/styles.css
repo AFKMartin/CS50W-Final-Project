@@ -57,8 +57,8 @@ h1, h2, h3 {
   color: #212529;
 }
 
-/* Centered content tweaks */
-.text-center {
+/* Custom spacing avoid overriding Bootstrap */
+.mt-custom {
   margin-top: 2rem;
 }
 
@@ -96,3 +96,17 @@ canvas {
 .tab-content {
   padding-top: 1rem;
 }
+
+.fade {
+  opacity: 0;
+  transform: translateY(20px);
+  filter: blur(4px);
+  transition: opacity 2s ease-in-out, transform 2s ease-in-out, filter 2s ease-in-out;
+}
+
+.fade.show {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+

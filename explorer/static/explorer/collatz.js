@@ -1,6 +1,20 @@
+// Descriptions animation
+window.onload = () => {
+    setTimeout(() => {
+        document.getElementById("conjecture").classList.add("show");
+    }, 500);
+
+    setTimeout(() => {
+        document.getElementById("rules").classList.add("show");
+    }, 1500);
+};
+
+let numbers = []
+let currentIndex = 0;
+let startTime, timerInterval;
+
 // Collatz visualization.
 // This script created the visualization of the collatz conjeture game using mountain and spiral charts (mountain looks better for low steps and spiral looks better for high steps).
-
 // Equivalent to pythons if __name__ == "__main__" fix the issue where this script has to wait for the html to load.
 window.addEventListener("DOMContentLoaded", () => {
   const dataScript = document.getElementById("collatz-data");
@@ -197,3 +211,17 @@ function drawSpiralChart(sequence){
     ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
     ctx.fill();
 }
+
+// Start game logic
+document.addEventListener("DOMContentLoaded", () => {
+  const startBtn = document.getElementById("startBtn");
+  const gameArea = document.getElementById("gameArea");
+
+  if (startBtn && gameArea) {
+    startBtn.addEventListener("click", () => {
+      gameArea.classList.remove("d-none"); // show game area
+      startBtn.classList.add("d-none");    // hide start button
+    });
+  }
+});
+
