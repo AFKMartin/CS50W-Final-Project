@@ -1,9 +1,71 @@
 {% extends "explorer/layout.html" %}
 
-{% block title %}TODO{% endblock %}
+{% load static %}
 
 {% block content %}
-  <div class="text-center">
-    <h1 class="fw-bold mb-4">TODO</h1>
-  </div>
+
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+<div class="profile-container">
+
+    <!-- Header -->
+    <div class="profile-header">
+        <div class="avatar-wrapper">
+            {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" class="avatar">
+            {% else %}
+                <img src="{% static 'img/default-avatar.png' %}" class="avatar">
+            {% endif %}
+        </div>
+
+        <div class="profile-info">
+            <h1>{{ profile_user.username }}</h1>
+
+            {% if profile.bio %}
+                <p class="bio">{{ profile.bio }}</p>
+            {% else %}
+                <p class="bio empty">No bio yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="profile-stats">
+        <h2>Game Stats</h2>
+        <!-- Collatz Steps -->
+        <p>Steps Collatz record:
+            {% if collatz_steps %}
+                {{ collatz_steps.value }}
+            {% else %}
+                <span class="empty">No record yet.</span>
+            {% endif %}
+        </p>
+        <!-- Collatz Max Value -->
+        <p>Max value Collatz record:
+            {% if collatz_max %}
+                {{ collatz_max.value }}
+            {% else %}
+                <span class="empty">No record yet.</span>
+            {% endif %}
+        </p>
+        <!-- Golbatch time -->
+        <p>Golbatch time record:
+            {% if golbatch_time %}
+                {{ golbatch_time.value }}
+            {% else %}
+                <span class="empty">No record yet.</span>
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="profile-ranking">
+        <h2>Ranking</h2>
+        <p>Your ranking on Collatz steps is:</p>
+        <p>Your ranking on Collatz max value is:</p>
+        <p>Your ranking on Golbatch is:</p>
+    </div>
+
+</div>
+
 {% endblock %}

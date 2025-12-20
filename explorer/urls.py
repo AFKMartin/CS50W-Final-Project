@@ -12,7 +12,7 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
 
     # Profile
-    path("profile/", views.profile, name="profile"),
+    path("profile/<str:username>/", views.profile_view, name="profile"),
 
     # Games
     path('collatz/', views.collatz_game, name='collatz'),

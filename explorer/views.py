@@ -1,10 +1,11 @@
 # explorer/views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.urls import reverse
 from .utils import *
+from .models import *
 
 def index(request):
     return render(request, "explorer/index.html")
@@ -91,4 +92,21 @@ def collatz_game(request):
         "error": error
     })
 
+def profile_view(request, username):
+    user = get_object_or_404(User, username=username)
+    profile, created = Profile.objects.get_or_create(user=user)
 
+    # scores
+    scores = GameScore.objects.filter(user=user)
+    collatz_steps = scores.filter(game_type="collatz_steps").order_by("-value").first()
+    collatz_max = scores.filter(game_type="collatz_max").order_by("-value").first()
+    goldbach_time = scores.filter(game_type="goldbach_time").order_by("value").first()  # lower is better
+
+
+    return render(request, "explorer/profile.html", {
+        "profile_user": user,
+        "profile": profile,
+        "collatz_steps": collatz_steps,
+        "collatz_max": collatz_max,
+        "golbatch_time": goldbach_time,
+    })
