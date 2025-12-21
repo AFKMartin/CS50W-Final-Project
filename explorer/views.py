@@ -6,6 +6,7 @@ from django.db import IntegrityError
 from django.urls import reverse
 from .utils import *
 from .models import *
+from django.db.models import Max
 
 def index(request):
     return render(request, "explorer/index.html")
@@ -74,18 +75,50 @@ def collatz_game(request):
     res = None
     error = None
     if request.method == "POST":
-        try:
-            n_str = request.POST.get("number")
-            if not n_str:
-                error = "Please enter a number."
-            else:
-                n = int(n_str)
+        n_str = request.POST.get("number")
+
+        if not n_str:
+            error = "Please enter a number."
+        else:
+            try:
+                n = int(n_str)  
                 if n < 1 or n > 1000000:
-                    error = "Please enter a number between 1 and 1.000.000"
+                    error = "Please enter a number between 1 and 1.000.000" 
                 else:
-                    res = collatz_seq(n)
-        except ValueError:
-            error = "Please enter a valid integer."
+                    res = collatz_seq(n)  
+
+                    if request.user.is_authenticated:
+                        steps = res["steps"]
+                        max_value = res["max_value"]
+
+                        # Steps Record 
+                        best_steps = GameScore.objects.filter(
+                            user = request.user,
+                            game_type = "collatz_steps"
+                        ).aggregate(Max("value"))["value__max"]
+
+                        if best_steps is None or steps > best_steps:
+                            GameScore.objects.create(
+                                user = request.user,
+                                game_type = "collatz_steps",
+                                value = steps
+                            )
+                        
+                        # Value Record 
+                        best_max = GameScore.objects.filter(
+                            user = request.user,
+                            game_type = "collatz_max"
+                        ).aggregate(Max("value"))["value__max"]
+
+                        if best_max is None or max_value > best_max:
+                            GameScore.objects.create(
+                                user = request.user,
+                                game_type = "collatz_max",
+                                value=max_value
+                            )
+
+            except ValueError:
+                error = "Please enter a valid integer."
 
     return render(request, "explorer/collatz.html", {
         "result": res,

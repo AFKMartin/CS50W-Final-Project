@@ -28,7 +28,7 @@
   {% endif %}
 
   <!-- Game area -->
-  <div id="gameArea" class="mt-5 {% if not result %}d-none{% endif %}">
+  <div id="gameArea" class="mt-5 {% if not result and not error %}d-none{% endif %}">
     <!-- Input form -->
     <form method="post" action="{% url 'collatz' %}" class="mb-4">
       {% csrf_token %}
