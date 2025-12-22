@@ -6,7 +6,9 @@ from django.db import IntegrityError
 from django.urls import reverse
 from .utils import *
 from .models import *
-from django.db.models import Max
+from django.db.models import Max, Min
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 def index(request):
     return render(request, "explorer/index.html")
@@ -65,11 +67,37 @@ def collatz(request):
 def riemann(request):
     return render(request, "explorer/riemann.html")
 
-def golbatch(request):
-    return render(request, "explorer/golbatch.html")
+def goldbach(request):
+    return render(request, "explorer/goldbach.html")
 
 def ranking(request):
     return render(request, "explorer/ranking.html")
+
+@csrf_exempt
+def goldbach_save_time(request):
+    if request.method == "POST" and request.user.is_authenticated:
+        try:
+            time_value = float(request.POST.get("time"))
+
+            # lower is better
+            best_time = GameScore.objects.filter(
+                user = request.user,
+                game_type = "goldbach_time"
+            ).aggregate(Min("value"))["value__min"]
+            
+            if best_time is None or time_value < best_time:
+                GameScore.objects.create(
+                    user = request.user,
+                    game_type = "goldbach_time",
+                    value = time_value
+                )
+
+            return JsonResponse({"status": "ok"})
+        
+        except (TypeError, ValueError):
+            return JsonResponse({"status": "error"}, status = 400)
+        
+    return JsonResponse({"status": "forbidden"}, status= 403)
 
 def collatz_game(request):
     res = None
@@ -141,5 +169,5 @@ def profile_view(request, username):
         "profile": profile,
         "collatz_steps": collatz_steps,
         "collatz_max": collatz_max,
-        "golbatch_time": goldbach_time,
+        "goldbach_time": goldbach_time,
     })

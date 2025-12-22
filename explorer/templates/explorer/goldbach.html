@@ -26,7 +26,8 @@
     <p id="progress" class="mt-3 fw-bold"></p>
     <h3 id="currentNumber"></h3>
     <form id="primeForm" class="row g-2 justify-content-center">
-
+      {% csrf_token %}
+      
       <!-- Prime 1-->
        <div class="col-12 col-md-auto">
         <input type="number" id="prime1" placeholder="Prime 1" class="form-control" required>
@@ -59,7 +60,7 @@
   </div>
 </div>
 
-<!-- Load golbatch.js -->
-<script src="{% static 'explorer/golbatch.js' %}"></script>
+<!-- Load goldbach.js -->
+<script src="{% static 'explorer/goldbach.js' %}"></script>
 
 {% endblock %}

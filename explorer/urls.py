@@ -17,7 +17,8 @@ urlpatterns = [
     # Games
     path('collatz/', views.collatz_game, name='collatz'),
     path("riemann/", views.riemann, name="riemann"),
-    path("golbatch/", views.golbatch, name="golbatch"),
+    path("goldbach/", views.goldbach, name="goldbach"),
+    path("goldbach/save-time/", views.goldbach_save_time, name="goldbach_save_time"),
 
     # Rankings
     path("ranking/", views.ranking, name="ranking"),

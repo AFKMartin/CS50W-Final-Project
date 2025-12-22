@@ -74,10 +74,25 @@ document.getElementById("primeForm").addEventListener("submit", function(e){
         document.getElementById("gameArea").classList.add("d-none");
         document.getElementById("resultArea").classList.remove("d-none");
         document.getElementById("finalScore").innerText = finalTime;
+        saveGoldbachTime(finalTime); // Save the value
       }
     } else {
       document.getElementById("feedback").innerText = "Try again!";
     }
 });
 
+// Best time Django sender
+function saveGoldbachTime(time) {
+    fetch("/goldbach/save-time/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: "time=" + time
+    });
+}
 
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
