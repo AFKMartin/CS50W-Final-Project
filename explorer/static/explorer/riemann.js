@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const ctx = document.getElementById("zetaChart");
     const sMaxInput = document.getElementById("s-max");
     const updateBtn = document.getElementById("update-zeta");
-
+    
+    // Computes the Riemann zeta function ζ(s) for real s > 1
     function zetaReal(s, terms = 10000) {
         let sum = 0;
         for (let n = 1; n <= terms; n++) {
@@ -21,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         return sum;
     }
-
+    // Visualization on how ζ(s) behaves as s increases.
     function generateData(sMin = 1.1, sMax = 6, step = 0.1) {
         const labels = [];
         const values = [];
@@ -119,6 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         379.024311454, 380.507909375
     ];
 
+    // Prime checker helper
     function isPrime(n) {
         if (n < 2) return false;
         for (let i = 2; i * i <= n; i++) {
@@ -126,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         return true;
     }
-
+    // PI(x)
     function primeCount(x) {
         let count = 0;
         for (let i = 2; i <= x; i++) {
@@ -134,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         return count;
     }
-
+    // Li(x)
     function li(x) {
         if (x < 2) return 0;
         const steps = 8000;
