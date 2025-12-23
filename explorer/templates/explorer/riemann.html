@@ -1,9 +1,74 @@
 {% extends "explorer/layout.html" %}
 
-{% block title %}TODO{% endblock %}
+{% load static %}
+
+{% block title %}Riemann Zeta Visualization{% endblock %}
 
 {% block content %}
-  <div class="text-center">
-    <h1 class="fw-bold mb-4">TODO</h1>
+
+<div class="text-center">
+  <h1 class="mb-4">Riemann Zeta Function</h1>
+
+  <!-- Description -->
+  <p id="conjecture" class="lead fade">
+    The Riemann zeta function ζ(s) is initially defined for real s &gt; 1 by the series <code>ζ(s) = Σ 1 / n^s</code>. The famous Riemann Hypothesis concerns the zeros of its analytic continuation in the complex plane, which are conjectured to lie on the critical line Re(s) = 1/2.
+  </p>
+
+  <p id="rules" class="mt-3 fade">
+    This plot shows an approximation of the Riemann zeta function for real values of <code>s &gt; 1</code>.
+  </p>
+
+  <div class="mb-3">
+    <label for="s-max" class="form-label">Max value of s (between 2 and 10):</label>
+    <input id="s-max" type="number" min="2" max="10" value="6" step="0.5"
+           class="form-control mx-auto" style="max-width: 200px;">
+    <button id="update-zeta" class="btn btn-primary mt-2">Update plot</button>
   </div>
+
+  <div style="max-width: 800px; margin: 0 auto;">
+    <canvas id="zetaChart" height="300"></canvas>
+  </div>
+</div>
+
+<hr class="my-5">
+
+<div class="text-center">
+  <h2 class="mb-4">Prime Counting vs. Riemann Prediction</h2>
+
+  <p class="lead fade" id="prime-desc">
+    Enter a number x, and compare the real number of primes ≤ x with the prediction
+    from the Riemann explicit formula using the first non‑trivial zeros.
+  </p>
+
+  <div class="mb-3">
+    <label for="prime-x" class="form-label">Enter x (max 5000):</label>
+    <input id="prime-x" type="number" min="10" max="5000" value="100"
+           class="form-control mx-auto" style="max-width: 200px;">
+  </div>
+
+  <div class="mb-3">
+    <label for="zero-count" class="form-label">Number of zeta zeros to use (max 200):</label>
+    <input id="zero-count" type="number" min="1" max="6" value="3"
+           class="form-control mx-auto" style="max-width: 200px;">
+  </div>
+
+  <button id="update-primes" class="btn btn-success mt-2">Plot Comparison</button>
+
+  <div style="max-width: 900px; margin: 0 auto;" class="mt-4">
+    <canvas id="primeChart" height="300"></canvas>
+  </div>
+
+<!-- Summary -->
+<div id="prime-summary" class="mt-4 alert alert-info" style="max-width: 900px; margin: 20px auto; display: none;">
+  <h5>Summary for x = <span id="summary-x"></span></h5>
+  <p><strong>Actual number of primes PI(x):</strong> <span id="summary-actual"></span></p>
+  <p><strong>Classical approximation Li(x):</strong> <span id="summary-li"></span> <span class="text-muted">(error: <span id="error-li"></span>)</span></p>
+  <p><strong>Riemann approximation RH(x) using <span id="summary-zeros"></span> zeros:</strong> <span id="summary-rh"></span> <span class="text-muted">(error: <span id="error-rh"></span>)</span></p>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'explorer/riemann.js' %}"></script>
+
 {% endblock %}
