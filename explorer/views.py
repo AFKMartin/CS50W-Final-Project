@@ -67,6 +67,9 @@ def collatz(request):
 def riemann(request):
     return render(request, "explorer/riemann.html")
 
+def riemannMore(request):
+    return render(request, "explorer/riemann-more.html")
+
 def goldbach(request):
     return render(request, "explorer/goldbach.html")
 

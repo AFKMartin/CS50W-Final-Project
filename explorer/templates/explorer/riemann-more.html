@@ -1,0 +1,360 @@
+{% extends "explorer/layout.html" %}
+{% load static %}
+
+{% block title %}Riemann Hypothesis — Explained{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; margin-top: 2rem;">
+
+  <h1>The Riemann Hypothesis — Explained Visually</h1>
+
+  <p class="lead">
+    <strong>** Everything here is subject to review. I AM NOT A MATHEMATICIAN.**</strong><br>
+    
+    This page explains the mathematical ideas behind the Riemann Hypothesis
+    and how this project uses them to predict the number of prime numbers.
+  </p>
+
+  <p>
+    <strong>Important:</strong> I am <em>not</em> attempting to prove the Riemann Hypothesis.
+    This project assumes the hypothesis is true and explores its consequences.
+  </p>
+
+  <hr>
+
+  <!-- SECTION 1 -->
+  <h2>1. The Problem: How many prime numbers are there?</h2>
+
+  <p>
+    Prime numbers (2, 3, 5, 7, 11, …) appear irregularly.
+    There is no simple formula that tells us whether a number is prime.
+  </p>
+
+  <p>
+    Instead of asking <em>"Is this number prime?"</em>,
+    mathematicians often ask:
+  </p>
+
+  <blockquote>
+    <strong>How many prime numbers are there below a given number x?</strong>
+  </blockquote>
+
+  <p>
+    This quantity is called <strong>π(x)</strong> (pronounced “pi of x”).
+  </p>
+
+  <p>
+    For example:
+  </p>
+
+  <pre><code>
+π(10)  = 4   → {2, 3, 5, 7}
+π(100) = 25 → (yeah there are 25 prime numbers under 100, don't make me list them)
+  </code></pre>
+
+  <p>
+    π(x) is the <strong>ground truth</strong>.
+    Everything else is an approximation we compare against it.
+  </p>
+
+  <hr>
+
+  <!-- SECTION 2 -->
+  <h2>2. Exact counting (slow but accurate)</h2>
+
+  <p>
+    The most straightforward method to compute π(x) is to test each integer individually and determine whether it is prime. It is well known that all prime numbers greater than 5 must end in 1, 3, 7, or 9. Nevertheless, even with this observation, performing such tests sequentially is computationally inefficient.
+  </p>
+
+  <p>
+    In the code, this looks like:
+  </p>
+
+  <pre><code class="language-js">
+    // PI(x)
+    function primeCount(x) {
+        let count = 0;
+        for (let i = 2; i <= x; i++) {
+            if (isPrime(i)) count++;
+        }
+        return count;
+    }
+  </code></pre>
+
+  <p>
+    This method is:
+  </p>
+  <ul>
+    <li style="color: green;">Exact</li>
+    <li style="color: red;">Very slow and computationally inefficient for large x</li>
+  </ul>
+
+  <p>
+    We use it only to know the correct answer,
+    not as a practical prediction method.
+  </p>
+
+  <hr>
+
+  <!-- SECTION 3 -->
+  <h2>3. A smooth approximation: Li(x)</h2>
+
+  <p>
+    Surprisingly, prime numbers follow a global trend: their density slowly decreases as numbers grow larger.
+  </p>
+
+  <p>
+    This observation leads to the <strong>logarithmic integral</strong>, denoted by <strong>Li(x)</strong>.
+  </p>
+
+  <p>
+    Intuitively:
+  </p>
+
+  <blockquote>
+    Li(x) estimates how many primes we expect below x,
+    assuming primes are distributed smoothly.
+  </blockquote>
+
+  <p>
+    In the code:
+  </p>
+
+  <pre><code class="language-js">
+    // Li(x)
+    function li(x) {
+        if (x < 2) return 0;
+        const steps = 8000;
+        const dx = (x - 2) / steps;
+        let sum = 0;
+        for (let i = 0; i < steps; i++) {
+            const t = 2 + i * dx;
+            sum += dx / Math.log(t);
+        }
+        return sum;
+    }
+  </code></pre>
+
+  <p>
+  This function numerically approximates the logarithmic integral
+  <em>Li(x)</em> by splitting the interval
+  <span>[2, x]</span> into many small pieces and summing
+  <span>1 / ln(t)</span> over them.
+  It treats prime density as a smooth function and adds up the expected
+  number of primes from 2 up to <em>x</em>.
+  </p>
+  <p>
+    Li(x) works well for large-scale trends, but it misses
+    the small fluctuations caused by primes being discrete.
+  </p>
+
+  <p>
+    Example:
+  </p>
+
+  <pre><code>
+x = 100
+π(x)  = 25
+Li(x) = 29.09
+  </code></pre>
+
+  <p>
+    The approximation overshoots because it is too smooth.
+  </p>
+
+  <hr>
+
+    <!-- SECTION 4 -->
+    <h2>4. Riemann zeta function</h2>
+
+    <p>
+    The <strong>Riemann zeta function</strong> is defined as:
+    </p>
+
+    <img src="/static/explorer/zeta1.jpg"
+        alt="Zeta function graph"
+        style="width: 300px; border-radius: 6px; margin: 1em 0;" />
+
+    <p>Which can be expressed as:</p>
+
+    <pre><code>
+    ζ(s) = 1 + 1/2^s + 1/3^s + 1/4^s + ...
+    </code></pre>
+
+    <p>
+    At first glance, this function seems unrelated to prime numbers.
+    However, Euler (as always) discovered an astonishing identity:
+    </p>
+
+    <pre><code>
+    ζ(s) = ∏ (1 - p⁻ˢ)⁻¹   over all primes p
+    </code></pre>
+
+    <p>This means:</p>
+
+    <blockquote>
+    <strong>The zeta function contains all prime numbers implicitly.</strong>
+    </blockquote>
+
+    <p>
+    Instead of listing primes, ζ(s) encodes them inside its structure.
+    </p>
+
+    <hr>
+
+  <!-- SECTION 5 -->
+  <h2>5. Zeros of ζ(s) and oscillations</h2>
+
+  <p>
+    The zeta function becomes zero at specific complex values of s.
+    These are called <strong>non-trivial zeros</strong>.
+  </p>
+
+  <p>
+    Each zero introduces an oscillation that corrects
+    the smooth approximation Li(x).
+  </p>
+
+  <p>
+    You can think of it like this:
+  </p>
+
+  <ul>
+    <li>Li(x) → smooth curve</li>
+    <li>Zeta zeros → waves</li>
+    <li>Li(x) + waves → accurate prediction</li>
+  </ul>
+
+  <hr>
+
+  <!-- SECTION 6 -->
+  <h2>6. The Riemann Hypothesis</h2>
+
+  <p>
+    The Riemann Hypothesis states that:
+  </p>
+
+  <blockquote>
+    All non-trivial zeros of ζ(s) have real part exactly equal to 1/2.
+  </blockquote>
+
+  <p>
+    In other words, every zero lies on a vertical line
+    in the complex plane.
+  </p>
+
+  <p>
+    This matters because:
+  </p>
+
+  <ul>
+    <li>If zeros drift away → predictions become unstable</li>
+    <li>If zeros stay on 1/2 → errors are tightly controlled</li>
+  </ul>
+
+    <p>
+    Despite overwhelming numerical evidence,
+    no proof (or disproof) is known.
+    That is why it is a hypothesis and not a theorem.
+    </p>
+
+  <hr>
+
+  <!-- SECTION 7 -->
+  <h2>7. Assuming RH is true: predicting primes</h2>
+
+  <p>
+    If the hypothesis is correct,
+    the zeros can be used to build a remarkably accurate estimator
+    of π(x).
+  </p>
+
+  <p>
+    In this project, that estimator is implemented as:
+  </p>
+
+  <pre><code class="language-js">
+    // Riemann explicit formula approximation (simplified oscillatory)
+    // uses a finite number of zeta zeros
+    // each zero adds an oscillatory correction
+    function riemannApprox(x, k) {
+        if (x < 2) return 0;
+        
+        // Start with Riemann R function (includes prime powers with Mobius weighting)
+        let result = riemannR(x);
+        
+        if (k === 0) return result;
+        
+        // Using a damped oscillation formula
+        const logX = Math.log(x);
+        
+        for (let n = 0; n < k && n < zetaZeros.length; n++) {
+            const gamma = zetaZeros[n];
+            
+            // Oscillatory correction term each pair of conjugate zeros contributes an oscillation
+            const amplitude = Math.sqrt(x) / (gamma * logX);
+            const phase = gamma * logX;
+            const correction = amplitude * Math.sin(phase);
+            
+            result -= 2 * correction;
+        }
+        
+        return result;
+    }
+  </code></pre>
+
+  <p>
+    The parameter <code>zeros</code> controls how many zeros are used.
+  </p>
+
+  <p>
+    More zeros → more corrections → better accuracy. (Assuming the hypothesis is true)
+  </p>
+
+  <hr>
+
+  <!-- SECTION 8 -->
+  <h2>8. Results</h2>
+
+  <pre><code>
+x = 100
+number of zeta zeros(RH) = 3
+
+π(x)  = 25
+Li(x) = 29.09   (error: 4.09)
+RH(x) = 25.15   (error: 0.15)
+
+  </code></pre>
+
+  <p>
+    With only a few zeros, the approximation
+    nearly matches the true number of primes.
+  </p>
+
+  <p>
+    This demonstrates why the Riemann Hypothesis is so powerful:
+    it connects deep properties of a complex function
+    to the distribution of prime numbers.
+  </p>
+
+  <hr>
+
+  <!-- SECTION 9 -->
+  <h2>9. What this project shows</h2>
+
+  <ul>
+    <li>Prime numbers are not random</li>
+    <li>Their structure is encoded in ζ(s)</li>
+    <li>Zeta zeros control prime fluctuations</li>
+    <li>Assuming RH gives near-perfect predictions</li>
+  </ul>
+
+  <p>
+    This project is an exploration of those ideas,
+    combining mathematics, visualization, and code.
+    <strong>But again, I'm not a Mathematician</strong>
+  </p>
+</div>
+
+<a href="{% url 'riemann' %}" target="_blank"><p style="text-align:center;">Wanna go back to the game?</p></a>
+{% endblock %}

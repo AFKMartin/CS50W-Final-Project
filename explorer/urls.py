@@ -19,7 +19,7 @@ urlpatterns = [
     path("riemann/", views.riemann, name="riemann"),
     path("goldbach/", views.goldbach, name="goldbach"),
     path("goldbach/save-time/", views.goldbach_save_time, name="goldbach_save_time"),
-
+    path("riemann-more/", views.riemannMore, name="riemann-more"),
     # Rankings
     path("ranking/", views.ranking, name="ranking"),
 ]
