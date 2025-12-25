@@ -33,5 +33,3 @@ class GameScore(models.Model):
     value = models.FloatField()  # steps, max value, or time
     created_at = models.DateTimeField(auto_now_add=True)
 
-class Ranking(models.Model):
-    pass # TODO

@@ -21,5 +21,5 @@ urlpatterns = [
     path("goldbach/save-time/", views.goldbach_save_time, name="goldbach_save_time"),
     path("riemann-more/", views.riemannMore, name="riemann-more"),
     # Rankings
-    path("ranking/", views.ranking, name="ranking"),
+    path("ranking/", views.rankings, name="ranking"), # this is not working
 ]

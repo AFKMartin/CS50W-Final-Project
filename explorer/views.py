@@ -174,3 +174,37 @@ def profile_view(request, username):
         "collatz_max": collatz_max,
         "goldbach_time": goldbach_time,
     })
+
+def rankings(request):
+    # Collatz Steps
+    top_steps = (
+        User.objects
+        .filter(gamescore__game_type = "collatz_steps")
+        .annotate(best_steps = Max("gamescore__value"))
+        .order_by("-best_steps")[:3] # top 3
+    )
+
+    # Collatz Max Value
+    top_max_value = (
+        User.objects
+        .filter(gamescore__game_type = "collatz_max")
+        .annotate(best_max = Max("gamescore__value"))
+        .order_by("-best_max")[:3] # top 3
+    )
+
+    # Goldbach Best Time 
+    top_goldbach = (
+        User.objects
+        .filter(gamescore__game_type = "goldbach_time")
+        .annotate(best_time = Min("gamescore__value"))
+        .order_by("best_time")[:3]
+    )
+
+    return render(request, "explorer/ranking.html", {
+        "top_steps": top_steps,
+        "top_max_value": top_max_value,
+        "top_goldbach": top_goldbach,
+    })
+
+
+# Have to solve this rankings problem

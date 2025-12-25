@@ -159,3 +159,29 @@ hr {
 h2 {
     margin-bottom: 10px;
 }
+
+/* Ranking styles */
+.ranking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.ranking-block {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: 0.2s ease;
+}
+
+.ranking-block:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.ranking-block h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
