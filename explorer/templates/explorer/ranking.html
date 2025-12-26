@@ -4,53 +4,90 @@
 
 {% block title %}Rankings{% endblock %}
 
-{% block body %}
+{% block content %}
 
-<h1 class="title">Rankings</h1>
+<h1 class="text-center mb-4">Rankings</h1>
 
 <div class="ranking-grid">
 
-  <!-- Collatz steps -->
-  <div class="ranking-block">
-    <h2>Most steps (Collatz)</h2>
-    <ol>
-      {% for user in top_steps %}
-        <li>
-          {{ user.username }} - {{ user.best_steps|floatformat:0 }}
-        </li>
-          {% empty %}
-            <li>No scores.</li>
-          {% endfor %}
-    </ol>
+  <!-- Collatz Steps -->
+  <div class="ranking-block card shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-center mb-3">Most Steps (Collatz)</h2>
+      <ol class="list-group list-group-numbered">
+        {% for user in top_steps %}
+          <li class="list-group-item d-flex justify-content-between align-items-center
+                     {% if user == request.user %}bg-light fw-bold{% endif %}">
+            
+            <span>
+              {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
+              {{ user.username }}
+              {% if user == request.user %}
+                <span class="badge bg-primary ms-2">You</span>
+              {% endif %}
+            </span>
+
+            <strong>{{ user.best_steps|floatformat:0 }}</strong>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">No scores.</li>
+        {% endfor %}
+      </ol>
+    </div>
   </div>
 
   <!-- Collatz Max Value -->
-  <div class="ranking-block">
-    <h2>Highest Max Value (Collatz)</h2>
-    <ol>
-      {% for user in top_max_value %}
-        <li>
-          {{ user.username }} - {{ user.best_max|floatformat:0 }}
-        </li>
-          {% empty %}
-            <li>No scores.</li>
-          {% endfor %}
-    </ol>
+  <div class="ranking-block card shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-center mb-3">Highest Max Value (Collatz)</h2>
+      <ol class="list-group list-group-numbered">
+        {% for user in top_max_value %}
+          <li class="list-group-item d-flex justify-content-between align-items-center
+                     {% if user == request.user %}bg-light fw-bold{% endif %}">
+            
+            <span>
+              {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
+              {{ user.username }}
+              {% if user == request.user %}
+                <span class="badge bg-primary ms-2">You</span>
+              {% endif %}
+            </span>
+
+            <strong>{{ user.best_max|floatformat:0 }}</strong>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">No scores.</li>
+        {% endfor %}
+      </ol>
+    </div>
   </div>
 
-  <!-- Goldbach time -->
-  <div class="ranking-block">
-    <h2>Best time (Goldbach)</h2>
-    <ol>
-      {% for user in top_goldbach %}
-        <li>
-          {{ user.username }} — {{ user.best_time }}s
-        </li>
-          {% empty %}
-            <li>No scores.</li>
-          {% endfor %}
-    </ol>
+  <!-- Goldbach Best Time -->
+  <div class="ranking-block card shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-center mb-3">Best Time (Goldbach)</h2>
+      <ol class="list-group list-group-numbered">
+        {% for user in top_goldbach %}
+          <li class="list-group-item d-flex justify-content-between align-items-center
+                     {% if user == request.user %}bg-light fw-bold{% endif %}">
+            
+            <span>
+              {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
+              {{ user.username }}
+              {% if user == request.user %}
+                <span class="badge bg-primary ms-2">You</span>
+              {% endif %}
+            </span>
+
+            <strong>{{ user.best_time|floatformat:1 }}s</strong>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">No scores.</li>
+        {% endfor %}
+      </ol>
+    </div>
   </div>
+
 </div>
 
 {% endblock %}

@@ -2,9 +2,9 @@
 
 {% load static %}
 
-{% block content %}
+{% block title %}{{ profile_user.username }}'s Profile{% endblock %}
 
-<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% block content %}
 
 <div class="profile-container">
 
@@ -12,60 +12,145 @@
     <div class="profile-header">
         <div class="avatar-wrapper">
             {% if profile.avatar %}
-                <img src="{{ profile.avatar.url }}" class="avatar">
+                <img src="{{ profile.avatar.url }}" class="avatar" alt="Avatar">
             {% else %}
-                <img src="{% static 'img/default-avatar.png' %}" class="avatar">
+                <img src="{% static 'explorer/default-avatar.png' %}" class="avatar" alt="Default Avatar">
             {% endif %}
         </div>
 
         <div class="profile-info">
             <h1>{{ profile_user.username }}</h1>
 
-            {% if profile.bio %}
-                <p class="bio">{{ profile.bio }}</p>
-            {% else %}
-                <p class="bio empty">No bio yet.</p>
+            <!-- Bio Display Edit -->
+            <div id="bioDisplay">
+                {% if profile.bio %}
+                    <p class="bio">{{ profile.bio }}</p>
+                {% else %}
+                    <p class="bio empty">No bio yet.</p>
+                {% endif %}
+                
+                {% if user == profile_user %}
+                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="toggleBioEdit()">
+                        Edit Bio
+                    </button>
+                {% endif %}
+            </div>
+
+            <!-- Bio Edit Form -->
+            {% if user == profile_user %}
+            <form method="POST" action="{% url 'edit_profile' %}" id="bioForm" style="display: none;" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Avatar Upload -->
+                <div class ="mb-3">
+                    <label for="avatarInput" class="form-label small">Change Avatar</label>
+                    <input type="file" name="avatar" id="avatarInput" class="form-control form-control-sm" accept="image/*">
+                </div>
+                
+                <!-- Bio Textarea -->
+                <textarea name="bio" class="form-control mb-2" rows="3" maxlength="400" placeholder="Write something about yourself...">{{ profile.bio }}</textarea>
+                <small class="text-muted d-block mb-2">Maximum 400 characters</small>
+                <button type="submit" class="btn btn-sm btn-primary me-2">Save</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="toggleBioEdit()">Cancel</button>
+            </form>
             {% endif %}
         </div>
     </div>
 
     <hr>
-
+    <!-- Records -->
     <div class="profile-stats">
         <h2>Game Stats</h2>
         <!-- Collatz Steps -->
-        <p>Steps Collatz record:
+        <p><strong>Steps Collatz record:</strong>
             {% if collatz_steps %}
-                {{ collatz_steps.value }}
+                {{ collatz_steps.value|floatformat:0 }}
             {% else %}
                 <span class="empty">No record yet.</span>
             {% endif %}
         </p>
         <!-- Collatz Max Value -->
-        <p>Max value Collatz record:
+        <p><strong>Max value Collatz record:</strong>
             {% if collatz_max %}
-                {{ collatz_max.value }}
+                {{ collatz_max.value|floatformat:0 }}
             {% else %}
                 <span class="empty">No record yet.</span>
             {% endif %}
         </p>
         <!-- Goldbach time -->
-        <p>Goldbach time record:
+        <p><strong>Goldbach time record:</strong>
             {% if goldbach_time %}
-                {{ goldbach_time.value }}
+                {{ goldbach_time.value|floatformat:2 }}s
             {% else %}
                 <span class="empty">No record yet.</span>
             {% endif %}
         </p>
     </div>
 
+    <hr>
+    <!-- Ranking Area -->
     <div class="profile-ranking">
-        <h2>Ranking</h2>
-        <p>Your ranking on Collatz steps is:</p>
-        <p>Your ranking on Collatz max value is:</p>
-        <p>Your ranking on Goldbach is:</p>
+        <h2>Rankings</h2>
+        
+        <!-- Collatz Steps Ranking -->
+        <p>
+            {% if steps_rank %}
+                <strong>Collatz Steps:</strong> 
+                {% if steps_rank == 1 %}🥇
+                {% elif steps_rank == 2 %}🥈
+                {% elif steps_rank == 3 %}🥉
+                {% endif %}
+                Rank <strong>#{{ steps_rank }}</strong>
+            {% else %}
+                <span class="empty">No ranking yet for Collatz steps.</span>
+            {% endif %}
+        </p>
+        
+        <!-- Collatz Max Value Ranking -->
+        <p>
+            {% if max_rank %}
+                <strong>Collatz Max Value:</strong> 
+                {% if max_rank == 1 %}🥇
+                {% elif max_rank == 2 %}🥈
+                {% elif max_rank == 3 %}🥉
+                {% endif %}
+                Rank <strong>#{{ max_rank }}</strong>
+            {% else %}
+                <span class="empty">No ranking yet for Collatz max value.</span>
+            {% endif %}
+        </p>
+        
+        <!-- Goldbach Ranking -->
+        <p>
+            {% if time_rank %}
+                <strong>Goldbach Time:</strong> 
+                {% if time_rank == 1 %}🥇
+                {% elif time_rank == 2 %}🥈
+                {% elif time_rank == 3 %}🥉
+                {% endif %}
+                Rank <strong>#{{ time_rank }}</strong>
+            {% else %}
+                <span class="empty">No ranking yet for Goldbach.</span>
+            {% endif %}
+        </p>
     </div>
 
 </div>
+<!-- toggle Bio logic, I can't make it work outside don't know why -->
+<script>
+function toggleBioEdit() {
+    const display = document.getElementById("bioDisplay");
+    const form = document.getElementById("bioForm");
+    
+    if (display.style.display === "none") {
+        display.style.display = "block";
+        form.style.display = "none";
+    } else {
+        display.style.display = "none";
+        form.style.display = "block";
+        form.querySelector("textarea").focus();
+    }
+}
+</script>
 
 {% endblock %}

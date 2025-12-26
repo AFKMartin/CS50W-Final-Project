@@ -13,13 +13,15 @@ urlpatterns = [
 
     # Profile
     path("profile/<str:username>/", views.profile_view, name="profile"),
+    path("edit-profile/", views.edit_profile, name="edit_profile"),
 
     # Games
-    path('collatz/', views.collatz_game, name='collatz'),
+    path("collatz/", views.collatz_game, name="collatz"),
     path("riemann/", views.riemann, name="riemann"),
     path("goldbach/", views.goldbach, name="goldbach"),
     path("goldbach/save-time/", views.goldbach_save_time, name="goldbach_save_time"),
     path("riemann-more/", views.riemannMore, name="riemann-more"),
+    
     # Rankings
     path("ranking/", views.rankings, name="ranking"), # this is not working
 ]

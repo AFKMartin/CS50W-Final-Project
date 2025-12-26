@@ -9,6 +9,7 @@ from .models import *
 from django.db.models import Max, Min
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     return render(request, "explorer/index.html")
@@ -61,6 +62,83 @@ def logout_view(request):
 def profile(request):
     return render(request, "explorer/profile.html")
 
+def profile_view(request, username):
+    user = get_object_or_404(User, username=username)
+    profile, created = Profile.objects.get_or_create(user=user)
+
+    # scores
+    scores = GameScore.objects.filter(user=user)
+    collatz_steps = scores.filter(game_type="collatz_steps").order_by("-value").first()
+    collatz_max = scores.filter(game_type="collatz_max").order_by("-value").first()
+    goldbach_time = scores.filter(game_type="goldbach_time").order_by("value").first()  # lower is better
+
+    # calculate rankings
+    # collatz steps
+    if collatz_steps:
+        steps_rank = (
+            GameScore.objects
+            .filter(game_type = "collatz_steps")
+            .values("user")
+            .annotate(best_score = Max("value"))
+            .filter(best_score__gt = collatz_steps.value)
+            .count() + 1
+        )
+    else:
+        steps_rank = None
+    
+    # collatz max value
+    if collatz_max:
+        max_rank = (
+            GameScore.objects
+            .filter(game_type = "collatz_max")
+            .values("user")
+            .annotate(best_score = Max("value"))
+            .filter(best_score__gt = collatz_max.value)
+            .count() + 1
+        )
+    else:
+        max_rank = None
+
+    # Goldbach time
+    if goldbach_time:
+        time_rank = (
+            GameScore.objects
+            .filter(game_type = "goldbach_time")
+            .values("user")
+            .annotate(best_score = Min("value"))
+            .filter(best_score__lt = goldbach_time.value)
+            .count() + 1
+        )
+    else:
+        time_rank = None
+
+    return render(request, "explorer/profile.html", {
+        "profile_user": user,
+        "profile": profile,
+        "collatz_steps": collatz_steps,
+        "collatz_max": collatz_max,
+        "goldbach_time": goldbach_time,
+        "steps_rank": steps_rank,
+        "max_rank": max_rank,
+        "time_rank": time_rank,
+    })
+
+@login_required
+def edit_profile(request):
+    if request.method == "POST":
+        bio = request.POST.get("bio", "").strip()
+        profile, created = Profile.objects.get_or_create(user = request.user)
+        profile.bio = bio[:400]  # Limit to 400 characters
+        avatar = request.FILES.get("avatar")
+
+        if avatar:
+            profile.avatar = avatar
+    
+        profile.save()
+        return redirect("profile", username = request.user.username)
+    
+    return redirect("profile", username = request.user.username)
+
 def collatz(request):
     return render(request, "explorer/collatz.html")
 
@@ -72,9 +150,6 @@ def riemannMore(request):
 
 def goldbach(request):
     return render(request, "explorer/goldbach.html")
-
-def ranking(request):
-    return render(request, "explorer/ranking.html")
 
 @csrf_exempt
 def goldbach_save_time(request):
@@ -156,32 +231,13 @@ def collatz_game(request):
         "error": error
     })
 
-def profile_view(request, username):
-    user = get_object_or_404(User, username=username)
-    profile, created = Profile.objects.get_or_create(user=user)
-
-    # scores
-    scores = GameScore.objects.filter(user=user)
-    collatz_steps = scores.filter(game_type="collatz_steps").order_by("-value").first()
-    collatz_max = scores.filter(game_type="collatz_max").order_by("-value").first()
-    goldbach_time = scores.filter(game_type="goldbach_time").order_by("value").first()  # lower is better
-
-
-    return render(request, "explorer/profile.html", {
-        "profile_user": user,
-        "profile": profile,
-        "collatz_steps": collatz_steps,
-        "collatz_max": collatz_max,
-        "goldbach_time": goldbach_time,
-    })
-
 def rankings(request):
     # Collatz Steps
     top_steps = (
         User.objects
         .filter(gamescore__game_type = "collatz_steps")
         .annotate(best_steps = Max("gamescore__value"))
-        .order_by("-best_steps")[:3] # top 3
+        .order_by("-best_steps")[:3]
     )
 
     # Collatz Max Value
@@ -189,7 +245,7 @@ def rankings(request):
         User.objects
         .filter(gamescore__game_type = "collatz_max")
         .annotate(best_max = Max("gamescore__value"))
-        .order_by("-best_max")[:3] # top 3
+        .order_by("-best_max")[:3]
     )
 
     # Goldbach Best Time 
@@ -205,6 +261,3 @@ def rankings(request):
         "top_max_value": top_max_value,
         "top_goldbach": top_goldbach,
     })
-
-
-# Have to solve this rankings problem
