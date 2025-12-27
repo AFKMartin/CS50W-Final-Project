@@ -11,6 +11,31 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
+# Achivements unlocker helper
+def achievements_helper(user, game_type, value):
+    # Checks if user unlocked achievements
+    achievements = Achievement.objects.filter(game_type=game_type)
+
+    for achievement in achievements:
+        # check if user alredy has the achievement
+        already_unlocked = UserAchievement.objects.filter(
+            user=user,
+            achievement=achievement
+        ).exists()
+        
+        if already_unlocked:
+            continue
+
+        # check if threshold is met
+        unlocked = False
+        if achievement.comparison == "gte" and value >= achievement.threshold:
+            unlocked = True
+        elif achievement.comparison == 'lte' and value <= achievement.threshold:
+            unlocked = True
+        
+        if unlocked:
+            UserAchievement.objects.create(user=user, achievement=achievement)
+
 def index(request):
     return render(request, "explorer/index.html")
 
@@ -111,6 +136,8 @@ def profile_view(request, username):
         )
     else:
         time_rank = None
+    
+    user_achievements = UserAchievement.objects.filter(user=user).select_related('achievement')
 
     return render(request, "explorer/profile.html", {
         "profile_user": user,
@@ -121,6 +148,7 @@ def profile_view(request, username):
         "steps_rank": steps_rank,
         "max_rank": max_rank,
         "time_rank": time_rank,
+        "user_achievements": user_achievements,
     })
 
 @login_required
@@ -170,6 +198,9 @@ def goldbach_save_time(request):
                     value = time_value
                 )
 
+                # Achievements 
+                achievements_helper(request.user, "goldbach_time", time_value)
+
             return JsonResponse({"status": "ok"})
         
         except (TypeError, ValueError):
@@ -209,6 +240,9 @@ def collatz_game(request):
                                 game_type = "collatz_steps",
                                 value = steps
                             )
+
+                            # Achievements
+                            achievements_helper(request.user, "collatz_steps", steps)
                         
                         # Value Record 
                         best_max = GameScore.objects.filter(
@@ -222,6 +256,9 @@ def collatz_game(request):
                                 game_type = "collatz_max",
                                 value=max_value
                             )
+
+                            # Achievemetns
+                            achievements_helper(request.user, "collatz_max", max_value)
 
             except ValueError:
                 error = "Please enter a valid integer."

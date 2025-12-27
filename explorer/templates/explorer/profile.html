@@ -135,6 +135,27 @@
         </p>
     </div>
 
+    <hr>
+    <!-- Achievements Area -->
+    <div class="profile-achievements">
+        <h2>Achievements ({{ user_achievements.count }})</h2>
+        {% if user_achievements %}
+            <div class="achievements-grid">
+                {% for user_ach in user_achievements %}
+                    <div class="achievement-card">
+                        <span class="achievement-icon">{{ user_ach.achievement.icon }}</span>
+                        <div class="achievement-info">
+                            <strong>{{ user_ach.achievement.name }}</strong>
+                            <p class="achievement-desc">{{ user_ach.achievement.description }}</p>
+                            <small class="text-muted">Unlocked {{ user_ach.unlocked_at|date:"M d, Y" }}</small>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="empty">No achievements unlocked yet.</p>
+        {% endif %}
+    </div>
 </div>
 <!-- toggle Bio logic, I can't make it work outside don't know why -->
 <script>

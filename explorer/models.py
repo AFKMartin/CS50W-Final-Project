@@ -33,3 +33,33 @@ class GameScore(models.Model):
     value = models.FloatField()  # steps, max value, or time
     created_at = models.DateTimeField(auto_now_add=True)
 
+class Achievement(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    icon = models.CharField(max_length=10)  # emoji I think, gotta test it
+    game_type = models.CharField(max_length=20, choices=GameScore.GAME_CHOICES)
+    threshold = models.FloatField()  # value needed to unlock
+    comparison = models.CharField(
+        max_length=10, 
+        choices=[('gte', 'Greater than or equal'), ('lte', 'Less than or equal')],
+        default='gte'
+    )
+    
+    def __str__(self):
+        return f"{self.icon} {self.name}"
+    
+    class Meta:
+        ordering = ['game_type', 'threshold']
+
+
+class UserAchievement(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='achievements')
+    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
+    unlocked_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'achievement')
+        ordering = ['-unlocked_at']
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.achievement.name}"
