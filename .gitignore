@@ -21,7 +21,6 @@ staticfiles/
 
 # Migrations 
 */migrations/__pycache__/
-*/migrations/*.py
 
 # IDE/editor files
 .vscode/
