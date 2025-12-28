@@ -12,15 +12,15 @@ In this project, you are asked to build a web application of your own. The natur
 
 The most common cause for failure of the final project is not spending enough effort on this next instruction. Read it completely. Your README.md file should be minimally multiple paragraphs in length, and should provide a comprehensive documentation of what you did and, if applicable, why you did it. Ensure you allocate sufficient time and energy to writing a README.md that you are proud of and that documents your project thoroughly, and that distinguishes this project from others in the course and defends its complexity. Simply saying, effectively, “It’s different from the other projects and it was complex to build.” is not at all sufficient justification of distinctiveness and complexity. This section alone should consist of several paragraphs, before you even begin to talk about the documentation of your project.
 
-- [ ] In a README.md in your project’s main directory, include a writeup describing your project, and specifically your file MUST include all of the following:
-    - [ ] Under its own header within the README called Distinctiveness and Complexity: Why you believe your project satisfies the distinctiveness and complexity requirements, mentioned above.  
-    - [ ] What’s contained in each file you created.  
-    - [ ] How to run your application.  
-    - [ ] Any other additional information the staff should know about your project.  
+- [x] In a README.md in your project’s main directory, include a writeup describing your project, and specifically your file MUST include all of the following:
+    - [x] Under its own header within the README called Distinctiveness and Complexity: Why you believe your project satisfies the distinctiveness and complexity requirements, mentioned above.  
+    - [x] What’s contained in each file you created.  
+    - [x] How to run your application.  
+    - [x] Any other additional information the staff should know about your project.  
 
-- [ ] If you’ve added any Python packages that need to be installed in order to run your web application, be sure to add them to a requirements.txt file!
+- [x] If you’ve added any Python packages that need to be installed in order to run your web application, be sure to add them to a requirements.txt file!
 
-- [ ] Though there is not a hard requirement here, a README.md in the neighborhood of 500 words is likely a solid target, assuming the other requirements are also satisfied.  
+- [x] Though there is not a hard requirement here, a README.md in the neighborhood of 500 words is likely a solid target, assuming the other requirements are also satisfied.  
 
 Failure to adhere to these requirements WILL result in a failing grade for the project, and you will need to wait and resubmit.
 

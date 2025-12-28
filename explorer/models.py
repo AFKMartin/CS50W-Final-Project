@@ -51,7 +51,6 @@ class Achievement(models.Model):
     class Meta:
         ordering = ['game_type', 'threshold']
 
-
 class UserAchievement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='achievements')
     achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
