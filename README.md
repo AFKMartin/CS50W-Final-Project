@@ -2,7 +2,7 @@
 
 Welcome to **Boring Num Games**, my final project for Harvard's CS50 Web Programming with Python and JavaScript course. This web application explores mathematical conjectures through interactive games and visualizations, built with Django and JavaScript.
 
-[**CS50W Final Project Especifications**](https://github.com/AFKMartin)
+[**CS50W Final Project Especifications**](https://github.com/AFKMartin/CS50W-Final-Project/blob/main/CS50W-Capstone-requirements.md)
 
 <img src="explorer/static/explorer/banner.png" width="800">
 
