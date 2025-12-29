@@ -154,20 +154,25 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-3. **Create a superuser (for admin access):**
+3. **Create achievements (Optional):**
+```bash
+python manage.py create_achievements
+```
+
+4. **Create a superuser (for admin access):**
 ```bash
 python manage.py createsuperuser
 ```
 NOTE: If you want you can also create a normal user using the register page.
 
-4. **Acces the application:**
+5. **Acces the application:**
 ```bash
 python manage.py runserver
 ```
 
 Navigate to `http://127.0.0.1:8000` to test the page and play the games.
 
-5. **Acces the admin**
+6. **Acces the admin**
 
 Navigate to `http://127.0.0.1:8000/admin` to use the admin interface (with the superuser) and for example add Achievement objects with:
 - Name, description, icon (emoji)
