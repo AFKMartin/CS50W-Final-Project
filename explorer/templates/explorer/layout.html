@@ -22,7 +22,15 @@
         <ul class="navbar-nav ms-auto">
           {% if user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'profile' user.username %}">Profile</a>
+              <a class="nav-link position-relative" href="{% url 'profile' user.username %}">
+                Profile
+                {% if unread_achievements_count > 0 %}
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ unread_achievements_count }}
+                    <span class="visually-hidden">unread achievements</span>
+                  </span>
+                {% endif %}
+              </a>               
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'ranking' %}">Ranking</a>

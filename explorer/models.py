@@ -55,6 +55,7 @@ class UserAchievement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='achievements')
     achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
     unlocked_at = models.DateTimeField(auto_now_add=True)
+    viewed = models.BooleanField(default=False)
     
     class Meta:
         unique_together = ('user', 'achievement')

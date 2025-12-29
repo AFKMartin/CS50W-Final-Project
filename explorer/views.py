@@ -138,6 +138,9 @@ def profile_view(request, username):
     
     user_achievements = UserAchievement.objects.filter(user=user).select_related('achievement')
 
+    if request.user == user:
+        UserAchievement.objects.filter(user=user, viewed=False).update(viewed=True)
+
     return render(request, "explorer/profile.html", {
         "profile_user": user,
         "profile": profile,
